@@ -1,13 +1,17 @@
 package com.example.cryptoapp
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import androidx.appcompat.app.AppCompatActivity
 import com.example.cryptoapp.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import java.io.InputStreamReader
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             }
             else
             {
-                binding.baseCurrency.text = "Failed Connection"
+                println("Failed Connection")
             }
         }
     }
@@ -47,10 +51,22 @@ class MainActivity : AppCompatActivity() {
     {
         runOnUiThread {
             kotlin.run {
-                //binding.lastUpdated.text = request.time_last_update_utc
-                binding.nzd.text = String.format("${request.data[0].symbol} %.2f", request.data[0].volume24)
-                binding.usd.text = String.format("${request.data[1].symbol}: %.2f", request.data[1].volume24)
-                binding.gbp.text = String.format("${request.data[2].symbol}: %.2f", request.data[2].volume24)
+                val list = findViewById<ListView>(R.id.recipe_list_view)
+                val array = arrayOf(
+                    request.data[0].symbol + ": " + String.format("%.3f", request.data[0].volume24),
+                    request.data[1].symbol + ": " + String.format("%.3f", request.data[1].volume24),
+                    request.data[2].symbol + ": " + String.format("%.3f", request.data[2].volume24),
+                    request.data[3].symbol + ": " + String.format("%.3f", request.data[3].volume24),
+                    request.data[4].symbol + ": " + String.format("%.3f", request.data[4].volume24),
+                    request.data[5].symbol + ": " + String.format("%.3f", request.data[5].volume24),
+                    request.data[6].symbol + ": " + String.format("%.3f", request.data[6].volume24),
+                )
+                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, array)
+                list.adapter = adapter
+                list.setOnItemClickListener { parent, view, position, id ->
+                    val intent = Intent(this, CurrentCryptoInfoActivity()::class.java)
+                    startActivity(intent)
+                }
             }
         }
     }
